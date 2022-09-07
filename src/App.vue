@@ -11,15 +11,15 @@ type TodoType = {
 };
 const todos: Ref<TodoType[]> = ref([]);
 
-const name = ref("");
-const inputContent = ref("");
-const inputCategory: Ref<null | string> = ref(null);
+const userName = ref("");
+const todoContent = ref("");
+const todoCategory: Ref<null | string> = ref(null);
 
 const todosInAscendantOrder = computed(() =>
   [...todos.value].sort((a, b) => a.createdAt - b.createdAt)
 );
 
-watch(name, (newName) => {
+watch(userName, (newName) => {
   localStorage.setItem("name", newName);
 });
 
@@ -32,11 +32,11 @@ watch(
 );
 
 const addTodo = () => {
-  if (!inputCategory.value) return;
+  if (!todoCategory.value) return;
   todos.value.push({
     id: Date.now(),
-    content: inputContent.value,
-    category: inputCategory.value,
+    content: todoContent.value,
+    category: todoCategory.value,
     done: false,
     editable: false,
     createdAt: new Date().getTime(),
@@ -48,7 +48,7 @@ const removeTodo = (todo: TodoType) => {
 };
 
 onMounted(() => {
-  name.value = localStorage.getItem("name") || "";
+  userName.value = localStorage.getItem("name") || "";
   const todosFromDisc = localStorage.getItem("todos");
   if (todosFromDisc) {
     todos.value = JSON.parse(todosFromDisc);
@@ -63,7 +63,12 @@ onMounted(() => {
     <section class="greeting">
       <h2 class="title">
         What's up,
-        <input type="text" id="name" placeholder="Name here" v-model="name" />
+        <input
+          type="text"
+          id="name"
+          placeholder="Your name here"
+          v-model="userName"
+        />
       </h2>
     </section>
 
@@ -77,7 +82,7 @@ onMounted(() => {
           name="content"
           id="content"
           placeholder="e.g. make a video"
-          v-model="inputContent"
+          v-model="todoContent"
         />
 
         <h4>Pick a category</h4>
@@ -88,7 +93,7 @@ onMounted(() => {
               name="category"
               id="category1"
               value="business"
-              v-model="inputCategory"
+              v-model="todoCategory"
             />
             <span class="bubble business"></span>
             <span>Business</span>
@@ -100,7 +105,7 @@ onMounted(() => {
               name="category"
               id="category2"
               value="personal"
-              v-model="inputCategory"
+              v-model="todoCategory"
             />
             <span class="bubble personal"></span>
             <span>Personal</span>
@@ -116,16 +121,13 @@ onMounted(() => {
       <div class="list" id="todo-list">
         <div
           v-for="todo in todosInAscendantOrder"
-          :class="`todo-item ${todo.done && 'done'}`"
+          class="todo-item"
+          :class="{ done: todo.done }"
           :key="todo.id"
         >
           <label>
             <input type="checkbox" v-model="todo.done" />
-            <span
-              :class="`bubble ${
-                todo.category === 'business' ? 'business' : 'personal'
-              }`"
-            ></span>
+            <span class="bubble" :class="todo.category"></span>
           </label>
 
           <div class="todo-content">
