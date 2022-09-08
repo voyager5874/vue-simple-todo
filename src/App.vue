@@ -41,6 +41,8 @@ const addTodo = () => {
     editable: false,
     createdAt: new Date().getTime(),
   });
+  todoContent.value = "";
+  todoCategory.value = null;
 };
 
 const removeTodo = (todo: TodoType) => {
@@ -82,7 +84,7 @@ onMounted(() => {
           name="content"
           id="content"
           placeholder="e.g. make a video"
-          v-model="todoContent"
+          v-model.trim="todoContent"
         />
 
         <h4>Pick a category</h4>
